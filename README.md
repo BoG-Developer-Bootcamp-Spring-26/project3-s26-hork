@@ -1,5 +1,7 @@
 # Project 3 - Animal Training App
 
+Andrew Liu - new
+
 ## Description
 
 Welcome to the final project of this year's dev bootcamp! For this project, you will create a full-stack animal training management app (this is a mini version of an app that BoG developed for Healing4Heroes). Your job is to develop a frontend and backend that interact with each other for deployment functionality to manage different users, animals, and training logs. Schemas for these data models can be found in `Schemas.md`.
