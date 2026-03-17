@@ -1,6 +1,7 @@
 # Project 3 - Animal Training App
 
 Jaahnvi Toolsidas 
+Andrew Liu
 
 ## Description
 
