@@ -14,16 +14,16 @@ export default async function handler(
 ) {
   if ( req.method === "POST" ) {
     try {
-      if (!req.body.name || !req.body.date || !req.body.duration) {
+      if (!req.body.user || !req.body.date || !req.body.hours) {
         return res.status(400).json({ message: "Missing required fields" });
       }
       const trainingLogData = {
-        user: req.body.name,
-        animal: req.body.date,
-        title: req.body.owner,
-        date: req.body.duration || 0,
-        description: req.body.profilePicture || "",
-        hours: req.body.hoursTrained || 0,
+        user: req.body.user,
+        animal: req.body.animal,
+        title: req.body.title,
+        date: req.body.date || 0,
+        description: req.body.description || "",
+        hours: req.body.hours || 0,
       } as TrainingLogData;
 
       connectDb();
