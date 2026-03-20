@@ -1,5 +1,6 @@
 import { UserData } from "../types/types";
 import User from "../models/User";
+import mongoose from "mongoose";
 
 export async function createUser(userData: UserData) {
   const newUser = new User(userData);
@@ -12,8 +13,9 @@ export async function getUser(userId: string) {
   return retrievedUser;
 }
 
-export async function getUsers() {
-  const retrievedUsers = await User.find({}, { password: 0});
+export async function getAllUsers(limit: number = 10, lastId?: string) {
+  const query: any = lastId ? { _id: { $gt: new mongoose.Types.ObjectId(lastId) } } : {};
+  const retrievedUsers = await User.find(query, { password: 0 }).limit(limit);
   return retrievedUsers;
 }
 

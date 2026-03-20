@@ -36,5 +36,25 @@ export default async function handler(
         message: "Error creating animal" 
       });
     }
+  } else if ( req.method === "PATCH" ) {
+    try {
+      if (!req.body.id || req.body.hoursTrained === undefined) {
+        return res.status(400).json({ message: "Missing animal ID or hoursTrained" });
+      }
+
+      connectDb();
+      const animal = await updateAnimal(req.body.id, { hoursTrained: req.body.hoursTrained });
+      if (!animal) {
+        return res.status(500).json({ message: "Animal not found" });
+      }
+      res.status(200).json({ 
+        animalData: animal, 
+        message: "Animal updated successfully" 
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        message: "Error updating animal" 
+      });
+    }
   }
 }

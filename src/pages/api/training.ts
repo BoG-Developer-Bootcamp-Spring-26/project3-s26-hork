@@ -37,5 +37,35 @@ export default async function handler(
         message: "Error creating training log" 
       });
     }
+  } else if ( req.method === "PATCH" ) {
+    try {
+      if (!req.body.id || !req.body.user) {
+        return res.status(400).json({ message: "Missing training log ID or user" });
+      }
+
+      connectDb();
+
+      const existingLog = await getTrainingLog(req.body.id);
+      if (!existingLog) {
+        return res.status(500).json({ message: "Training log not found" });
+      }
+      if (existingLog.user.toString() !== req.body.user) {
+        return res.status(500).json({ message: "Unauthorized to update this training log" });
+      }
+
+      const trainingLog = await updateTrainingLog(req.body.id, { hours: req.body.hours });
+      if (!trainingLog) {
+        return res.status(500).json({ message: "Training log not found" });
+      }
+
+      res.status(200).json({ 
+        trainingLogData: trainingLog, 
+        message: "Training log updated successfully" 
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        message: "Error updating training log" 
+      });
+    }
   }
 }
