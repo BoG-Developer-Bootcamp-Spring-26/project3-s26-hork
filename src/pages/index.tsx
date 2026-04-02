@@ -1,5 +1,4 @@
-//sidebar not on this page but here to test
-/*import { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 
@@ -108,7 +107,7 @@ export default function Home() {
       <div className="flex-1 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
 
-        {/* sign in */ /*} 
+        {/* sign in */} 
         {view === 'signin' && (
           <>
             <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Login</h1>
@@ -157,7 +156,7 @@ export default function Home() {
           </>
         )}
 
-        {/* sign up */ /*} 
+        {/* sign up */} 
         {view === 'signup' && (
           <>
             <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Create Account</h1>
@@ -239,9 +238,9 @@ export default function Home() {
       </div>
     </div>
   );
-} */
+} 
 
-  import { useState } from 'react';
+/**import { useState } from 'react';
 import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
@@ -317,6 +316,7 @@ export default function Home() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Called handle sign in")
     setStatus({ message: 'Loading...', isError: false, suggestSignUp: false });
 
     try {
@@ -326,7 +326,10 @@ export default function Home() {
         body: JSON.stringify(signInData),
       });
 
+      console.log("Finished api call")
+
       const data = await response.json();
+      console.log(JSON.stringify(data))
 
       if (response.ok) {
         setStatus({ message: 'Signed in! Redirecting...', isError: false, suggestSignUp: false });
@@ -344,7 +347,8 @@ export default function Home() {
           suggestSignUp: notFound,
         });
       }
-    } catch {
+    } catch (error) {
+      console.error('Error during sign-in:', error);
       setStatus({ message: 'Failed to connect to the server.', isError: true, suggestSignUp: false });
     }
   };
@@ -354,7 +358,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Sidebar - typically hidden on login pages but included here as requested */}
       <Sidebar user={user} />
 
       <div className="flex-1 flex flex-col">
@@ -362,7 +365,7 @@ export default function Home() {
         
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="w-full max-w-sm">
-            {/* sign in */}
+            {/* sign in */ /*} 
             {view === 'signin' && (
               <>
                 <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Login</h1>
@@ -411,7 +414,7 @@ export default function Home() {
               </>
             )}
 
-            {/* sign up */}
+            {/* sign up */ /*}
             {view === 'signup' && (
               <>
                 <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Create Account</h1>
@@ -493,4 +496,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
+} */
