@@ -1,14 +1,14 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import TrainingLogCard from '@/components/TrainingLogCard';
 import { PlusSquare } from 'lucide-react';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
-export default function Dashboard() {
-  const [user] = useState({
-    fullName: 'Jaahnvi Toolsidas',
-    admin: true,
-  });
+export default function Dashboard({ user }: { user: SessionUser }) {
+  const router = useRouter();
 
   const [logs] = useState([
     {
@@ -53,7 +53,9 @@ export default function Dashboard() {
           <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
             <h1 className="text-2xl font-semibold text-gray-700">Training logs</h1>
             
-            <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+            <button 
+              onClick={() => router.push('/dashboard/training-logs/create')}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
               <PlusSquare size={20} />
               Create new
             </button>
@@ -70,4 +72,10 @@ export default function Dashboard() {
       </div>
     </div>
   );
-} 
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const result = await getServerSideUser(context);
+  if (!('user' in result)) return result;
+  return { props: { user: result.user } };
+}

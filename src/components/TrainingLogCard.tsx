@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pencil } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 interface TrainingLogProps {
     //fix
@@ -15,6 +16,7 @@ interface TrainingLogProps {
 }
 
 export default function TrainingLogCard({ log }: TrainingLogProps) {
+  const router = useRouter();
   const [yearStr, monthStr, dayStr] = String(log.date).split('T')[0].split('-');
   
   const day = parseInt(dayStr);
@@ -52,7 +54,7 @@ export default function TrainingLogCard({ log }: TrainingLogProps) {
       <div className="flex items-center pr-6">
         <button 
           className="w-12 h-12 bg-[#C23127] hover:bg-red-700 text-white rounded-full flex items-center justify-center transition-colors shadow-md"
-          onClick={() => console.log("Edit log:", log._id)}
+          onClick={() => router.push(`/dashboard/training-logs/${log._id}/edit`)}
         >
           <Pencil size={20} fill="currentColor" />
         </button>

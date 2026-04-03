@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import TrainingLogCard from '@/components/TrainingLogCard';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
-export default function AllTraining() {
-  const [user] = useState({
-    fullName: 'Jaahnvi Toolsidas',
-    admin: true,
-  });
+export default function AllTraining({ user }: { user: SessionUser }) {
 
   const [allLogs, setAllLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,4 +60,10 @@ export default function AllTraining() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const result = await getServerSideUser(context);
+  if (!('user' in result)) return result;
+  return { props: { user: result.user } };
 }

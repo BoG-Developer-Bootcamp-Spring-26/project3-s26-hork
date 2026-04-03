@@ -7,13 +7,20 @@ const TitleBar = () => {
     <div className="w-full bg-white border border-gray-200 px-6 py-4 relative shadow-[0_2px_4px_0px_rgba(0,0,0,0.25)]">
       <div className="flex items-center">
         {/* left: logo and title */}
-        <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+        <div className="flex items-center gap-1 shrink-0 ml-2 mr-4">
           <img src={appLogo.src} alt="Logo" className="h-9 object-contain" />
           <span className="font-oswald font-[500] text-gray-900 text-[2.25rem] leading-none -translate-y-[2px]">Progress</span>
         </div>
 
-        {/* middle: search bar */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center w-full max-w-md pointer-events-none">
+        {/* search bar: centered in full bar by default, shifts right when tight */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: 'max(calc(50% - 14rem), 236px)',
+            width: '28rem',
+            maxWidth: 'calc(100% - 240px)',
+          }}
+        >
           <div className="relative w-full pointer-events-auto">
             <img
               src={searchLogo.src}
