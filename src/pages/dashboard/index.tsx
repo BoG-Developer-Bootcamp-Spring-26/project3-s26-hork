@@ -1,27 +1,73 @@
 import { useState } from 'react';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
+import TrainingLogCard from '@/components/TrainingLogCard';
+import { PlusSquare } from 'lucide-react';
 
 export default function Dashboard() {
-  //fix this!
   const [user] = useState({
     fullName: 'Jaahnvi Toolsidas',
     admin: true,
   });
 
+  const [logs] = useState([
+    {
+      _id: '1',
+      title: 'Complete sit lessons',
+      description: 'Lucy finishes the sit lessons very well today. Should give her a treat',
+      date: '2026-4-3',
+      hours: 20,
+      user: 'Jaahnvi Toolsidas',
+      animal: 'Golden Retriever - Lucy'
+    },
+    {
+      _id: '2',
+      title: 'Complete sit lessons',
+      description: 'Lucy finishes the sit lessons very well today. Should give her a treat',
+      date: '2026-3-19',
+      hours: 20,
+      user: 'Jaahnvi Toolsidas',
+      animal: 'Golden Retriever - Lucy'
+    },
+    {
+      _id: '3',
+      title: 'Complete sit lessons',
+      description: 'Lucy finishes the sit lessons very well today. Should give her a treat',
+      date: '2026-4-3',
+      hours: 20,
+      user: 'Jaahnvi Toolsidas',
+      animal: 'Golden Retriever - Lucy'
+    }
+  ]);
+
   return (
     <div className="flex flex-col h-screen bg-white">
       <TitleBar />
+
       <div className="flex flex-1 overflow-hidden">
         <Sidebar user={user} />
 
-        <main className="flex-1 flex items-center justify-center bg-gray-50 p-6 overflow-y-auto">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">Dashboard</h1>
-            <p className="text-gray-500 text-lg">Coming soon.</p>
+
+        <main className="flex-1 flenpm x flex-col bg-white overflow-y-auto">
+          
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
+            <h1 className="text-2xl font-semibold text-gray-700">Training logs</h1>
+            
+            <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              <PlusSquare size={20} />
+              Create new
+            </button>
+          </div>
+
+          <div className="p-8 max-w-5xl">
+            <div className="space-y-6">
+              {logs.map((log) => (
+                <TrainingLogCard key={log._id} log={log} />
+              ))}
+            </div>
           </div>
         </main>
       </div>
     </div>
   );
-}
+} 

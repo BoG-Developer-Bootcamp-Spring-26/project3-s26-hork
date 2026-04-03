@@ -37,9 +37,14 @@ export default function Sidebar({ user }: SidebarProps) {
   );
 
   return (
-    <aside className="w-72 h-screen bg-white border-r border-gray-200 flex flex-col p-4">
+    <aside className="w-72 h-full bg-white border-r border-gray-200 flex flex-col p-4">
       <nav className="flex-1 space-y-2">
-        <NavItem href="/dashboard" icon={Pencil} label="Training logs" active={true} />
+        <NavItem 
+          href="/dashboard" 
+          icon={Pencil} 
+          label="Training logs" 
+          active={router.pathname === '/dashboard'} 
+        />
         <NavItem href="/animals" icon={Bone} label="Animals" />
 
         {user.admin && (
@@ -47,7 +52,12 @@ export default function Sidebar({ user }: SidebarProps) {
             <div className="border-t border-gray-200 mb-6" />
             <h3 className="px-4 text-gray-500 font-bold text-lg mb-4">Admin access</h3>
             <div className="space-y-2">
-              <NavItem href="/admin/training" icon={Folder} label="All training" />
+              <NavItem 
+                href="/dashboard/all-training-logs" 
+                icon={Folder} 
+                label="All training" 
+                active={router.pathname === '/dashboard/all-training-logs'} 
+              />
               <NavItem href="/admin/animals" icon={Rabbit} label="All animals" />
               <NavItem href="/admin/users" icon={Users} label="All users" />
             </div>
