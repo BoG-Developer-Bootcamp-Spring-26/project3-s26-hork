@@ -29,19 +29,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import AnimalCard from '@/components/AnimalCard';
-import { PlusSquare } from 'lucide-react';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
 export default function Animals({ user }: { user: SessionUser }) {
-  // Hardcoded mock data to match your screenshot
   const mockAnimals = Array(6).fill({
     _id: '1',
     name: 'Lucy',
     breed: 'Golden Retriever',
     owner: 'Jaahnvi Toolsidas',
     hoursTrained: 100,
-    profilePicture: '/images/animalPicture.png' // Matches your public folder path
+    profilePicture: '/images/animalPicture.png'
   });
 
   return (
@@ -52,20 +50,12 @@ export default function Animals({ user }: { user: SessionUser }) {
         <Sidebar user={user} />
         
         <main className="flex-1 flex flex-col bg-white overflow-y-auto">
-          {/* Header section updated to "All animals" to match UI mockup */}
           <div className="flex items-center justify-between px-10 py-6 border-b border-gray-100">
             <h1 className="text-2xl font-semibold text-gray-700 font-sans tracking-tight">
               All animals
             </h1>
-            
-            {/* Create New Button */}
-            <button className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
-              <PlusSquare size={20} strokeWidth={1.5} />
-              <span className="text-sm font-medium">Create new</span>
-            </button>
           </div>
 
-          {/* Grid Area */}
           <div className="p-10 bg-gray-50/30 flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 max-w-6xl mx-auto">
               {mockAnimals.map((animal, index) => (

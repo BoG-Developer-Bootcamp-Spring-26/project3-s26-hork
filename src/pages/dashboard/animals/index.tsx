@@ -26,6 +26,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return { props: { user: result.user } };
 } **/
 
+import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import AnimalCard from '@/components/AnimalCard';
@@ -48,12 +49,13 @@ export default function Animals({ user }: { user: SessionUser }) {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar user={user} />
         <main className="flex-1 flex flex-col bg-white overflow-y-auto">
-          <div className="flex items-center justify-between px-10 py-6 border-b border-gray-100">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
             <h1 className="text-2xl font-semibold text-gray-700 font-sans">Animals</h1>
-            <button className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
-              <PlusSquare size={20} strokeWidth={1.5} />
-              <span className="text-sm font-medium">Create new</span>
-              </button>
+            <button 
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              <PlusSquare size={20} />
+              Create new
+            </button>
               </div>
               <div className="p-10 bg-gray-50/30 flex-1">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-6xl mx-auto">
