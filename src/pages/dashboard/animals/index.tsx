@@ -35,6 +35,8 @@ import { GetServerSidePropsContext } from 'next';
 import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
 export default function Animals({ user }: { user: SessionUser }) {
+  const router = useRouter();
+
   const mockAnimals = Array(6).fill({
     _id: '1',
     name: 'Lucy',
@@ -52,6 +54,7 @@ export default function Animals({ user }: { user: SessionUser }) {
           <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
             <h1 className="text-2xl font-semibold text-gray-700 font-sans">Animals</h1>
             <button 
+              onClick={() => router.push('/dashboard/animals/create')}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
               <PlusSquare size={20} />
               Create new
