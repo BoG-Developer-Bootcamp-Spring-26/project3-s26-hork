@@ -16,9 +16,14 @@ export default async function handler(
     try {
       connectDb();
       const animals = await getAllAnimals();
+      const serialized = animals.map((a: any) => ({
+        ...a.toObject(),
+        _id: a._id.toString(),
+        owner: a.owner?.fullName ?? a.owner?.toString() ?? '',
+      }));
 
       res.status(200).json({
-        animalData: animals,
+        animalData: serialized,
         message: "Animals retrieved successfully"
       });
     } catch (error) {

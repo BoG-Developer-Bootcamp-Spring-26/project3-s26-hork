@@ -42,9 +42,14 @@ export default async function handler(
     }
   } else if ( req.method === "GET" ) {
     try {
-      connectDb();
+      await connectDb();
+      if (req.query.id) {
+        const user = await getUser(req.query.id as string);
+        if (!user) return res.status(404).json({ message: "User not found" });
+        const { password: _, ...safeUser } = user.toObject();
+        return res.status(200).json({ userData: safeUser, message: "User retrieved successfully" });
+      }
       const users = await getAllUsers();
-
       res.status(200).json({
         userData: users,
         message: "Users retrieved successfully"
