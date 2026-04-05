@@ -13,9 +13,13 @@ export async function getAnimal(animalId: string) {
   return retrievedAnimal;
 }
 
-export async function getAllAnimals(limit: number = 10, lastId?: string) {
+export async function getAnimalsByOwner(ownerId: string) {
+  return Animal.find({ owner: ownerId }).populate('owner', 'fullName');
+}
+
+export async function getAllAnimals(limit: number = 100, lastId?: string) {
   const query: any = lastId ? { _id: { $gt: new mongoose.Types.ObjectId(lastId) } } : {};
-  const retrievedAnimals = await Animal.find(query).limit(limit);
+  const retrievedAnimals = await Animal.find(query).limit(limit).populate('owner', 'fullName');
   return retrievedAnimals;
 }
 

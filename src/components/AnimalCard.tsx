@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface AnimalCardProps {
   animal: {
@@ -6,20 +6,32 @@ interface AnimalCardProps {
     name: string;
     breed: string;
     owner: string;
-    hoursTrained: number;
+    hoursTrained?: number;
     profilePicture?: string;
   };
 }
 
 export default function AnimalCard({ animal }: AnimalCardProps) {
-  const ownerInitial = animal.owner.charAt(0).toUpperCase();
+  const isId = animal.owner.length === 24;
+  const [ownerName, setOwnerName] = useState(isId ? '' : animal.owner);
+
+  useEffect(() => {
+    if (!isId) return;
+    fetch(`/api/user?id=${animal.owner}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.userData?.fullName) setOwnerName(data.userData.fullName);
+      });
+  }, [animal.owner, isId]);
+
+  const ownerInitial = ownerName.charAt(0).toUpperCase();
 
   return (
     <div className="w-full bg-white rounded-[30px] shadow-lg overflow-hidden border border-gray-100 transition-transform hover:scale-[1.02]">
       
       <div className="h-40 w-full relative"> 
         <img 
-          src={animal.profilePicture || "/images/animalpicture.jpg"} 
+          src="/images/animalPicture.png"
           alt={animal.name}
           className="w-full h-full object-cover"
         />
@@ -38,9 +50,9 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
           </h2>
           
           <div className="flex items-center text-gray-400 text-[13px] mt-0.5 font-medium tracking-tight">
-            <span className="truncate max-w-[200px]">{animal.owner}</span>
+            <span className="truncate max-w-50">{ownerName}</span>
             <span className="mx-2 text-gray-300 font-black">•</span>
-            <span className="shrink-0">Trained: {animal.hoursTrained} hours</span>
+            <span className="shrink-0">Trained: {animal.hoursTrained ?? 0} hours</span>
           </div>
         </div>
       </div>

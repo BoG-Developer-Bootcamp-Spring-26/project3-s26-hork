@@ -9,6 +9,7 @@ export default function AllTraining({ user }: { user: SessionUser }) {
 
   const [allLogs, setAllLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     async function fetchAllLogs() {
@@ -31,7 +32,7 @@ export default function AllTraining({ user }: { user: SessionUser }) {
 
   return (
     <div className="flex flex-col h-screen bg-white font-sans">
-      <TitleBar />
+      <TitleBar searchValue={query} onSearchChange={setQuery} />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar user={user} />
@@ -46,7 +47,7 @@ export default function AllTraining({ user }: { user: SessionUser }) {
               <p className="text-gray-500">Loading all logs...</p>
             ) : allLogs.length > 0 ? (
               <div className="space-y-6">
-                {allLogs.map((log: any) => (
+                {(query ? allLogs.filter((log: any) => log.title.toLowerCase().includes(query.toLowerCase())) : allLogs).map((log: any) => (
                   <TrainingLogCard key={log._id} log={log} />
                 ))}
               </div>

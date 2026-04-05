@@ -15,7 +15,18 @@ export async function getTrainingLog(trainingLogId: string) {
 
 export async function getAllTrainingLogs(limit: number = 10, lastId?: string) {
   const query: any = lastId ? { _id: { $gt: new mongoose.Types.ObjectId(lastId) } } : {};
-  const retrievedTrainingLogs = await TrainingLog.find(query).limit(limit);
+  const retrievedTrainingLogs = await TrainingLog.find(query)
+    .populate('user', 'fullName')
+    .populate('animal', 'name breed')
+    .limit(limit);
+  return retrievedTrainingLogs;
+}
+
+export async function getTrainingLogsByUser(userId: string) {
+  const retrievedTrainingLogs = await TrainingLog.find({ user: userId })
+    .populate('user', 'fullName')
+    .populate('animal', 'name breed')
+    .sort({ date: -1 });
   return retrievedTrainingLogs;
 }
 

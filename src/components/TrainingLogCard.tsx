@@ -10,8 +10,8 @@ interface TrainingLogProps {
     description: string;
     date: string | number;
     hours: number;
-    user: string; 
-    animal: string;
+    user: { fullName: string };
+    animal: { name: string; breed: string };
   };
 }
 
@@ -29,7 +29,7 @@ export default function TrainingLogCard({ log }: TrainingLogProps) {
       
       <div className="bg-[#2D366F] text-white w-24 flex flex-col items-center justify-center py-4 px-2 shrink-0">
         <span className="text-4xl font-bold leading-none">{day}</span>
-        <span className="text-[15px] font-medium mt-1 uppercase tracking-tighter leading-tight text-center">
+        <span className="font-oswald text-[16px] font-medium mt-1 tracking-tighter leading-tight text-center">
           {month} - {year}
         </span>
       </div>
@@ -42,7 +42,7 @@ export default function TrainingLogCard({ log }: TrainingLogProps) {
           </div>
           
           <p className="text-gray-400 text-sm mt-1">
-            {log.user} - {log.animal}
+            {log.user.fullName} - {log.animal.breed} - {log.animal.name}
           </p>
         </div>
 

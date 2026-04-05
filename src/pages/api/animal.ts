@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AnimalData } from "@server/mongodb/types/types";
-import { createAnimal, getAnimal, updateAnimal, deleteAnimal } from "@server/mongodb/actions/animal";
+import { createAnimal, getAnimal, updateAnimal, deleteAnimal, getAnimalsByOwner } from "@server/mongodb/actions/animal";
 import connectDb from "../../../server/mongodb/connectDb";
+import { verifyToken } from "@server/jwt";
 
 type AnimalApiData = {
-  animalData?: AnimalData;
+  animalData?: AnimalData | AnimalData[];
   message: string;
 };
 
@@ -12,28 +13,48 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AnimalApiData>,
 ) {
-  if ( req.method === "POST" ) {
+  if ( req.method === "GET" ) {
     try {
-      if (!req.body.name || !req.body.breed || !req.body.owner) {
+      const token = req.cookies?.token;
+      if (!token) return res.status(401).json({ message: "Unauthorized" });
+      const { userId } = verifyToken(token);
+      await connectDb();
+      const animals = await getAnimalsByOwner(userId);
+      const serialized = animals.map((a: any) => ({
+        ...a.toObject(),
+        _id: a._id.toString(),
+        owner: a.owner?.fullName ?? a.owner?.toString() ?? '',
+      }));
+      return res.status(200).json({ animalData: serialized, message: "Animals retrieved successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: "Error retrieving animals" });
+    }
+  } else if ( req.method === "POST" ) {
+    try {
+      const token = req.cookies?.token;
+      if (!token) return res.status(401).json({ message: "Unauthorized" });
+      const { userId } = verifyToken(token);
+
+      if (!req.body.name || !req.body.breed) {
         return res.status(400).json({ message: "Missing required fields" });
       }
       const animalData = {
         name: req.body.name,
         breed: req.body.breed,
-        owner: req.body.owner,
+        owner: userId,
         hoursTrained: req.body.hoursTrained || 0,
         profilePicture: req.body.profilePicture || "",
       } as AnimalData;
 
-      connectDb();
+      await connectDb();
       const animal = await createAnimal(animalData);
-      res.status(200).json({ 
-        animalData: animal, 
-        message: "Animal created successfully" 
+      res.status(200).json({
+        animalData: animal,
+        message: "Animal created successfully"
       });
     } catch (error) {
-      res.status(500).json({ 
-        message: "Error creating animal" 
+      res.status(500).json({
+        message: "Error creating animal"
       });
     }
   } else if ( req.method === "PATCH" ) {

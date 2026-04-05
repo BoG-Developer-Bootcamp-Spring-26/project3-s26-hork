@@ -1,19 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
 export default function CreateAnimal({ user }: { user: SessionUser }) {
-  const today = new Date();
-  const currentDay = today.getDate();
-  const currentMonth = today.toLocaleString('default', { month: 'long' });
-  const currentYear = today.getFullYear();
+  const router = useRouter();
 
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  const [name, setName] = useState('');
+  const [breed, setBreed] = useState('');
+  const [hoursTrained, setHoursTrained] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+    try {
+      const res = await fetch('/api/animal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, breed, hoursTrained }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || 'Failed to save');
+      } else {
+        router.push('/dashboard/animals');
+      }
+    } catch {
+      setError('Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="flex flex-col h-screen bg-white font-sans text-[#1A0A08]">
@@ -27,95 +49,60 @@ export default function CreateAnimal({ user }: { user: SessionUser }) {
             <h1 className="text-2xl font-semibold text-gray-700">Animals</h1>
           </div>
 
-
           <div className="flex-1 p-10 flex justify-center">
-            <form className="space-y-6 w-full max-w-4xl">
+            <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-4xl">
 
               <div>
                 <label className="block text-lg font-bold mb-2">Animal Name</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-400"
                 />
               </div>
 
               <div>
                 <label className="block text-lg font-bold mb-2">Breed</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Breed"
+                  value={breed}
+                  onChange={e => setBreed(e.target.value)}
+                  required
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-400"
                 />
               </div>
 
               <div>
                 <label className="block text-lg font-bold mb-2">Total hours trained</label>
-                <input 
-                  type="number" 
-                  defaultValue={100}
+                <input
+                  type="number"
+                  min={0}
+                  value={hoursTrained}
+                  onChange={e => setHoursTrained(Number(e.target.value))}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
                 />
               </div>
 
-              <div className="flex gap-8">
-                <div className="flex-[3]">
-                  <label className="block text-lg font-bold mb-2">Birth Month</label>
-                  <div className="relative">
-                    <select 
-                      defaultValue={currentMonth}
-                      className="w-full p-3 border border-gray-300 rounded-lg bg-white appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    >
-                      {months.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex-1">
-                  <label className="block text-lg font-bold mb-2">Date</label>
-                  <input 
-                    type="number" 
-                    defaultValue={currentDay}
-                    className="w-full p-3 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <label className="block text-lg font-bold mb-2">Year</label>
-                  <input 
-                    type="number" 
-                    defaultValue={currentYear}
-                    className="w-full p-3 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-1 focus:ring-gray-400"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-lg font-bold mb-2">Note</label>
-                <textarea 
-                  rows={6}
-                  placeholder="Note"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400 resize-none placeholder-gray-400"
-                />
-              </div>
+              {error && <p className="text-red-600 text-sm">{error}</p>}
 
               <div className="flex gap-6 pt-4">
-                <button 
+                <button
                   type="button"
+                  onClick={() => router.back()}
                   className="flex-1 py-3 border border-[#C23127] text-[#C23127] font-bold rounded-lg hover:bg-red-50 transition-colors"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
-                  className="flex-1 py-3 bg-[#C23127] text-white font-bold rounded-lg hover:bg-[#a62a21] transition-colors"
+                  disabled={saving}
+                  className="flex-1 py-3 bg-[#C23127] text-white font-bold rounded-lg hover:bg-[#a62a21] transition-colors disabled:opacity-60"
                 >
-                  Save
+                  {saving ? 'Saving...' : 'Save'}
                 </button>
               </div>
             </form>
