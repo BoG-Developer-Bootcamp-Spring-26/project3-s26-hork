@@ -109,10 +109,8 @@ export default function Home() {
     'w-full bg-transparent border-0 border-b border-red-500 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-red-700 transition-colors';
 
   return (
-    <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
-      <TitleBar />
-      <div className="absolute -bottom-[10%] -left-[10%] w-[40vw] max-w-[300px] aspect-square bg-[red] rounded-full z-0 pointer-events-none" />
-
+    <div className="min-h-screen bg-white flex flex-col">
+      <TitleBar hideSearch />
       <div className="flex-1 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
 

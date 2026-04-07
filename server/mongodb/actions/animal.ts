@@ -31,3 +31,7 @@ export async function updateAnimal(animalId: string, newData: Partial<AnimalData
 export async function deleteAnimal(animalId: string) {
   await Animal.findByIdAndDelete(animalId);
 }
+
+export async function adjustAnimalHours(animalId: string, delta: number) {
+  await Animal.findByIdAndUpdate(animalId, { $inc: { hoursTrained: delta } });
+}

@@ -129,7 +129,7 @@ export default function CreateTrainingLog({ user }: { user: SessionUser }) {
               </div>
 
               <div className="flex gap-8">
-                <div className="flex-[3]">
+                <div className="flex-3">
                   <label className="block text-lg font-bold mb-2">Month</label>
                   <select
                     value={month}

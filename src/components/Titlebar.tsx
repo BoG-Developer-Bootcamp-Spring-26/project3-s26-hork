@@ -5,9 +5,10 @@ import searchLogo from "@images/searchLogo.png";
 interface TitleBarProps {
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  hideSearch?: boolean;
 }
 
-const TitleBar = ({ searchValue, onSearchChange }: TitleBarProps) => {
+const TitleBar = ({ searchValue, onSearchChange, hideSearch }: TitleBarProps) => {
   return (
     <div className="w-full bg-white border border-gray-200 px-6 py-4 relative shadow-[0_2px_4px_0px_rgba(0,0,0,0.25)]">
       <div className="flex items-center">
@@ -18,6 +19,7 @@ const TitleBar = ({ searchValue, onSearchChange }: TitleBarProps) => {
         </div>
 
         {/* search bar: centered in full bar by default- shifts right when no space */}
+        {!hideSearch && (
         <div
           className="absolute pointer-events-none"
           style={{
@@ -42,6 +44,7 @@ const TitleBar = ({ searchValue, onSearchChange }: TitleBarProps) => {
             />
           </div>
         </div>
+        )}
       </div>
     </div>
   );
