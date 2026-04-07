@@ -109,8 +109,9 @@ export default function Home() {
     'w-full bg-transparent border-0 border-b border-red-500 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-red-700 transition-colors';
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
       <TitleBar hideSearch />
+      <img src="/images/quarterCircle.png" alt="" className="absolute bottom-0 left-0 w-[20vw] max-w-38 z-0 pointer-events-none" />
       <div className="flex-1 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
 
@@ -243,9 +244,8 @@ export default function Home() {
 
       </div>
       </div>
-
       <footer className="w-full py-8 text-center text-[12px] text-gray-500 z-10 leading-relaxed">
-        <p>Made with ♡ by Andrew Liu & Jaahnvi Toolsidas</p>
+        <p>Made with ♥ by Andrew Liu &amp; Jaahnvi Toolsidas</p>
         <p>© Spring 2026 BOG Developer Bootcamp. All rights reserved.</p>
       </footer>
     </div>

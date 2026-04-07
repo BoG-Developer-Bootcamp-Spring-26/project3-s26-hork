@@ -24,7 +24,7 @@ export async function getAllAnimals(limit: number = 100, lastId?: string) {
 }
 
 export async function updateAnimal(animalId: string, newData: Partial<AnimalData>) {
-  const updatedAnimal = await Animal.findByIdAndUpdate(animalId, newData, { new: true });
+  const updatedAnimal = await Animal.findByIdAndUpdate(animalId, { $set: newData }, { new: true, strict: false });
   return updatedAnimal;
 }
 

@@ -61,7 +61,8 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
 }*/
 
 import React, { useEffect, useState } from 'react';
-import { Pencil } from 'lucide-react'; // Added for the edit icon
+import { useRouter } from 'next/router';
+import { Pencil } from 'lucide-react';
 
 interface AnimalCardProps {
   animal: {
@@ -75,7 +76,8 @@ interface AnimalCardProps {
   onEdit?: () => void;
 }
 
-export default function AnimalCard({ animal, onEdit }: AnimalCardProps) {
+export default function AnimalCard({ animal }: AnimalCardProps) {
+  const router = useRouter();
   const isId = animal.owner.length === 24;
   const [ownerName, setOwnerName] = useState(isId ? '' : animal.owner);
 
@@ -117,7 +119,7 @@ export default function AnimalCard({ animal, onEdit }: AnimalCardProps) {
           </div>
         </div>
         <button 
-          onClick={onEdit}
+          onClick={() => router.push(`/dashboard/animals/${animal._id}/edit?returnTo=${encodeURIComponent(router.pathname)}`)}
           className="p-2 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
         >
           <Pencil size={18} strokeWidth={2.5} />

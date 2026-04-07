@@ -10,6 +10,8 @@ export interface AnimalData {
   breed: string;
   owner: string; // ObjectId as a string
   hoursTrained?: number;
+  birthdate?: Date;
+  note?: string;
   profilePicture?: string;
 }
 

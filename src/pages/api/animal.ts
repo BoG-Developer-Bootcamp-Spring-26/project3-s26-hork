@@ -19,6 +19,16 @@ export default async function handler(
       if (!token) return res.status(401).json({ message: "Unauthorized" });
       const { userId } = verifyToken(token);
       await connectDb();
+
+      const { id } = req.query;
+      if (id) {
+        const animal = await getAnimal(id as string);
+        if (!animal) return res.status(404).json({ message: "Animal not found" });
+        const obj = animal.toObject();
+        const serialized = { ...obj, _id: obj._id.toString(), owner: obj.owner?.toString() ?? '', note: obj.note ?? '', birthdate: obj.birthdate ?? null };
+        return res.status(200).json({ animalData: serialized, message: "Animal retrieved successfully" });
+      }
+
       const animals = await getAnimalsByOwner(userId);
       const serialized = animals.map((a: any) => ({
         ...a.toObject(),
@@ -59,14 +69,22 @@ export default async function handler(
     }
   } else if ( req.method === "PATCH" ) {
     try {
-      if (!req.body.id || req.body.hoursTrained === undefined) {
-        return res.status(400).json({ message: "Missing animal ID or hoursTrained" });
+      const { id, name, breed, hoursTrained } = req.body;
+      if (!id) {
+        return res.status(400).json({ message: "Missing animal ID" });
       }
 
-      connectDb();
-      const animal = await updateAnimal(req.body.id, { hoursTrained: req.body.hoursTrained });
+      const updates: Partial<{ name: string; breed: string; hoursTrained: number; birthdate: Date; note: string }> = {};
+      if (name !== undefined) updates.name = name;
+      if (breed !== undefined) updates.breed = breed;
+      if (hoursTrained !== undefined) updates.hoursTrained = hoursTrained;
+      if (req.body.birthdate !== undefined) updates.birthdate = req.body.birthdate;
+      if (req.body.note !== undefined) updates.note = req.body.note;
+
+      await connectDb();
+      const animal = await updateAnimal(id, updates);
       if (!animal) {
-        return res.status(500).json({ message: "Animal not found" });
+        return res.status(404).json({ message: "Animal not found" });
       }
       res.status(200).json({ 
         animalData: animal, 

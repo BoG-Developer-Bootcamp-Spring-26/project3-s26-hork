@@ -27,6 +27,13 @@ const animalSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  birthdate: {
+    type: Date,
+  },
+  note: {
+    type: String,
+    default: '',
+  },
   profilePicture: {
     type: String,
   }
