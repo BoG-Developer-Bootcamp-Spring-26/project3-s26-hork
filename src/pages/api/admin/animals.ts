@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AnimalData } from "@server/mongodb/types/types";
-import { getAllAnimals } from "@server/mongodb/actions/animal";
+import { getAllAnimals, deleteAnimal } from "@server/mongodb/actions/animal";
 import connectDb from "@server/mongodb/connectDb";
 
 type AnimalApiData = {
@@ -30,6 +30,16 @@ export default async function handler(
       res.status(500).json({
         message: "Error retrieving animals"
       });
+    }
+  } else if (req.method === "DELETE") {
+    try {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ message: "Missing animal ID" });
+      await connectDb();
+      await deleteAnimal(id as string);
+      res.status(200).json({ message: "Animal deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting animal" });
     }
   }
 }

@@ -77,5 +77,24 @@ export default async function handler(
         message: "Error updating animal" 
       });
     }
+  } else if (req.method === "DELETE") {
+    try {
+      const token = req.cookies?.token;
+      if (!token) return res.status(401).json({ message: "Unauthorized" });
+      const { userId } = verifyToken(token);
+
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ message: "Missing animal ID" });
+
+      await connectDb();
+      const animal = await getAnimal(id as string);
+      if (!animal) return res.status(404).json({ message: "Animal not found" });
+      if (animal.owner.toString() !== userId) return res.status(403).json({ message: "Unauthorized" });
+
+      await deleteAnimal(id as string);
+      return res.status(200).json({ message: "Animal deleted successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: "Error deleting animal" });
+    }
   }
 }

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { UserData } from "@server/mongodb/types/types";
-import { getAllUsers } from "@server/mongodb/actions/user";
+import { getAllUsers, deleteUser } from "@server/mongodb/actions/user";
 import connectDb from "@server/mongodb/connectDb";
 
 type UserApiData = {
@@ -25,6 +25,16 @@ export default async function handler(
       res.status(500).json({
         message: "Error retrieving users"
       });
+    }
+  } else if (req.method === "DELETE") {
+    try {
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ message: "Missing user ID" });
+      await connectDb();
+      await deleteUser(id as string);
+      res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting user" });
     }
   }
 }
