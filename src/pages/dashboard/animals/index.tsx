@@ -43,7 +43,10 @@ export default function Animals({ user }: { user: SessionUser }) {
               <div className="p-10 bg-gray-50/30 flex-1">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-6xl mx-auto">
                 {filtered.map((animal) => (
-                  <AnimalCard key={animal._id} animal={animal} />
+                  <AnimalCard
+                    key={animal._id}
+                    animal={animal}
+                  />
                 ))}
               </div>
           </div>

@@ -57,7 +57,10 @@ export default function Dashboard({ user }: { user: SessionUser }) {
             ) : logs.length > 0 ? (
               <div className="space-y-6">
                 {(query ? logs.filter((log: any) => log.title?.toLowerCase().includes(query.toLowerCase())) : logs).map((log: any) => (
-                  <TrainingLogCard key={log._id} log={log} />
+                  <TrainingLogCard
+                    key={log._id}
+                    log={log}
+                  />
                 ))}
               </div>
             ) : (

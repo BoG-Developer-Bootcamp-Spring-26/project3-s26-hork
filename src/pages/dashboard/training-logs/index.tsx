@@ -32,7 +32,10 @@ export default function TrainingLogs({ user }: { user: SessionUser }) {
             {filtered.length > 0 ? (
               <div className="space-y-6">
                 {filtered.map((log: any) => (
-                  <TrainingLogCard key={log._id} log={log} />
+                  <TrainingLogCard
+                    key={log._id}
+                    log={log}
+                  />
                 ))}
               </div>
             ) : (

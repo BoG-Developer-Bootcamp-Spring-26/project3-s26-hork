@@ -48,7 +48,10 @@ export default function AllTraining({ user }: { user: SessionUser }) {
             ) : allLogs.length > 0 ? (
               <div className="space-y-6">
                 {(query ? allLogs.filter((log: any) => log.title.toLowerCase().includes(query.toLowerCase())) : allLogs).map((log: any) => (
-                  <TrainingLogCard key={log._id} log={log} />
+                  <TrainingLogCard
+                    key={log._id}
+                    log={log}
+                  />
                 ))}
               </div>
             ) : (
