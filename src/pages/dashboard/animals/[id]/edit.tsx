@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { X } from 'lucide-react';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import { GetServerSidePropsContext } from 'next';
@@ -24,7 +25,26 @@ export default function EditAnimal({ user }: { user: SessionUser }) {
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+
+  async function handleDelete() {
+    if (!id || !confirm('Are you sure you want to delete this animal?')) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/animal?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        router.push(backPath);
+      } else {
+        const data = await res.json();
+        setError(data.message || 'Failed to delete');
+      }
+    } catch {
+      setError('Failed to delete');
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -57,7 +77,7 @@ export default function EditAnimal({ user }: { user: SessionUser }) {
       const res = await fetch('/api/animal', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, name, breed, hoursTrained, birthdate, note }),
+        body: JSON.stringify({ id, name, breed, birthdate, note }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -94,8 +114,17 @@ export default function EditAnimal({ user }: { user: SessionUser }) {
         <Sidebar user={user} />
 
         <main className="flex-1 flex flex-col bg-white overflow-y-auto">
-          <div className="px-10 py-6 border-b border-gray-100">
+          <div className="flex items-center justify-between px-10 py-6 border-b border-gray-100">
             <h1 className="text-2xl font-semibold text-gray-700">Animals</h1>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors text-sm font-medium disabled:opacity-50"
+            >
+              <X size={20} strokeWidth={2.5} />
+              <span>{deleting ? 'Deleting...' : 'Delete animal'}</span>
+            </button>
           </div>
 
           <div className="flex-1 p-10 flex justify-center">
@@ -129,12 +158,12 @@ export default function EditAnimal({ user }: { user: SessionUser }) {
                 <label className="block text-lg font-bold mb-2">Total hours trained</label>
                 <input
                   type="number"
-                  min={0}
                   value={hoursTrained}
-                  onChange={e => setHoursTrained(Number(e.target.value))}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  readOnly
+                  disabled
+                  className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-400 cursor-not-allowed"
                 />
+                <p className="text-xs text-gray-400 mt-1">Calculated automatically from training logs.</p>
               </div>
 
               <div className="flex gap-8">

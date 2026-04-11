@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AnimalData } from "@server/mongodb/types/types";
 import { createAnimal, getAnimal, updateAnimal, deleteAnimal, getAnimalsByOwner } from "@server/mongodb/actions/animal";
+import { deleteTrainingLogsByAnimal } from "@server/mongodb/actions/traininglog";
 import connectDb from "../../../server/mongodb/connectDb";
 import { verifyToken } from "@server/jwt";
 
@@ -109,6 +110,7 @@ export default async function handler(
       if (!animal) return res.status(404).json({ message: "Animal not found" });
       if (animal.owner.toString() !== userId) return res.status(403).json({ message: "Unauthorized" });
 
+      await deleteTrainingLogsByAnimal(id as string);
       await deleteAnimal(id as string);
       return res.status(200).json({ message: "Animal deleted successfully" });
     } catch (error) {

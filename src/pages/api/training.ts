@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TrainingLogData } from "@server/mongodb/types/types";
 import { createTrainingLog, getTrainingLog, updateTrainingLog, deleteTrainingLog, getTrainingLogsByUser } from "@server/mongodb/actions/traininglog";
-import { adjustAnimalHours } from "@server/mongodb/actions/animal";
+import { adjustAnimalHours, getAnimal } from "@server/mongodb/actions/animal";
 import connectDb from "../../../server/mongodb/connectDb";
 import { verifyToken } from "@server/jwt";
 
@@ -43,6 +43,16 @@ export default async function handler(
       if (!req.body.animal || !req.body.date || !req.body.hours) {
         return res.status(400).json({ message: "Missing required fields" });
       }
+
+      await connectDb();
+      const animal = await getAnimal(req.body.animal);
+      if (!animal) {
+        return res.status(400).json({ message: "Animal not found" });
+      }
+      if (animal.owner.toString() !== userId) {
+        return res.status(400).json({ message: "Animal does not belong to this user" });
+      }
+
       const trainingLogData = {
         user: userId,
         animal: req.body.animal,
@@ -52,7 +62,6 @@ export default async function handler(
         hours: req.body.hours,
       } as TrainingLogData;
 
-      await connectDb();
       const trainingLog = await createTrainingLog(trainingLogData);
       await adjustAnimalHours(req.body.animal, req.body.hours);
       res.status(200).json({
@@ -60,8 +69,9 @@ export default async function handler(
         message: "Training log created successfully"
       });
     } catch (error) {
+      console.error("POST /api/training error:", error);
       res.status(500).json({
-        message: "Error creating training log"
+        message: error instanceof Error ? error.message : "Error creating training log"
       });
     }
   } else if ( req.method === "PATCH" ) {
@@ -96,17 +106,24 @@ export default async function handler(
         return res.status(500).json({ message: "Training log not found" });
       }
 
-      const animalId = req.body.animal ?? existingLog.animal;
+      const newAnimalId = (req.body.animal ?? existingLog.animal).toString();
+      const oldAnimalId = existingLog.animal.toString();
       const newHours = req.body.hours ?? existingLog.hours;
-      await adjustAnimalHours(animalId.toString(), newHours - oldHours);
+      if (newAnimalId !== oldAnimalId) {
+        await adjustAnimalHours(oldAnimalId, -oldHours);
+        await adjustAnimalHours(newAnimalId, newHours);
+      } else {
+        await adjustAnimalHours(oldAnimalId, newHours - oldHours);
+      }
 
       res.status(200).json({
         trainingLogData: trainingLog,
         message: "Training log updated successfully"
       });
     } catch (error) {
+      console.error("PATCH /api/training error:", error);
       res.status(500).json({
-        message: "Error updating training log"
+        message: error instanceof Error ? error.message : "Error updating training log"
       });
     }
   } else if ( req.method === "DELETE" ) {

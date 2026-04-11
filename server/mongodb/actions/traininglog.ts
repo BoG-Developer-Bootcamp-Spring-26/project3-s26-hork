@@ -38,3 +38,7 @@ export async function updateTrainingLog(trainingLogId: string, newData: Partial<
 export async function deleteTrainingLog(trainingLogId: string) {
   await TrainingLog.findByIdAndDelete(trainingLogId);
 }
+
+export async function deleteTrainingLogsByAnimal(animalId: string) {
+  await TrainingLog.deleteMany({ animal: animalId });
+}

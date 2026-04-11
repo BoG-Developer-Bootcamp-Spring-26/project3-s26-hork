@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
@@ -25,7 +25,27 @@ export default function EditTrainingLog({ user }: { user: SessionUser }) {
   const [animals, setAnimals] = useState<{ _id: string; name: string; breed: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+  const submittingRef = useRef(false);
+
+  async function handleDelete() {
+    if (!id || !confirm('Are you sure you want to delete this training log?')) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/training?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        router.push('/dashboard');
+      } else {
+        const data = await res.json();
+        setError(data.message || 'Failed to delete');
+      }
+    } catch {
+      setError('Failed to delete');
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -54,6 +74,8 @@ export default function EditTrainingLog({ user }: { user: SessionUser }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setError('');
     const monthIndex = months.indexOf(month);
     const date = new Date(year, monthIndex, day).toISOString();
@@ -75,6 +97,7 @@ export default function EditTrainingLog({ user }: { user: SessionUser }) {
       setError('Failed to save');
     } finally {
       setSaving(false);
+      submittingRef.current = false;
     }
   }
 
@@ -105,10 +128,12 @@ export default function EditTrainingLog({ user }: { user: SessionUser }) {
   
   <button 
     type="button"
-    className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors text-sm font-medium"
+    onClick={handleDelete}
+    disabled={deleting}
+    className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors text-sm font-medium disabled:opacity-50"
   >
     <X size={20} strokeWidth={2.5} />
-    <span>Delete log</span>
+    <span>{deleting ? 'Deleting...' : 'Delete log'}</span>
   </button>
 </div>
           <div className="flex-1 p-10 flex justify-center">

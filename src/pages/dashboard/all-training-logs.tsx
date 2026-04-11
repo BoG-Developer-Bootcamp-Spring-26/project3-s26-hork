@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
 import TrainingLogCard from '@/components/TrainingLogCard';
@@ -6,12 +7,16 @@ import { GetServerSidePropsContext } from 'next';
 import { getServerSideUser, SessionUser } from '@server/utils/getServerSideUser';
 
 export default function AllTraining({ user }: { user: SessionUser }) {
-
+  const router = useRouter();
   const [allLogs, setAllLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
+    if (!user.admin) {
+      const timeout = setTimeout(() => router.back(), 2500);
+      return () => clearTimeout(timeout);
+    }
     async function fetchAllLogs() {
       try {
         const response = await fetch('/api/admin/training'); 
@@ -28,7 +33,22 @@ export default function AllTraining({ user }: { user: SessionUser }) {
     }
 
     fetchAllLogs();
-  }, []);
+  }, [user.admin]);
+
+  if (!user.admin) {
+    return (
+      <div className="flex flex-col h-screen bg-white font-sans">
+        <TitleBar hideSearch />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar user={user} />
+          <main className="flex-1 flex flex-col items-center justify-center gap-2">
+            <p className="text-xl font-semibold text-gray-800">You are not an admin and cannot access this page.</p>
+            <p className="text-sm text-gray-400">Redirecting you back...</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-white font-sans">

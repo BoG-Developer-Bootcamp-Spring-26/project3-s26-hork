@@ -33,5 +33,9 @@ export async function deleteAnimal(animalId: string) {
 }
 
 export async function adjustAnimalHours(animalId: string, delta: number) {
-  await Animal.findByIdAndUpdate(animalId, { $inc: { hoursTrained: delta } });
+  await Animal.findByIdAndUpdate(
+    animalId,
+    [{ $set: { hoursTrained: { $max: [0, { $add: ['$hoursTrained', delta] }] } } }],
+    { updatePipeline: true } as any,
+  );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import TitleBar from '@/components/Titlebar';
 import Sidebar from '@/components/Sidebar';
@@ -25,6 +25,7 @@ export default function CreateTrainingLog({ user }: { user: SessionUser }) {
   const [animals, setAnimals] = useState<{ _id: string; name: string; breed: string }[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     fetch('/api/animal')
@@ -38,6 +39,8 @@ export default function CreateTrainingLog({ user }: { user: SessionUser }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setError('');
     const monthIndex = months.indexOf(month);
     const date = new Date(year, monthIndex, day).toISOString();
@@ -59,6 +62,7 @@ export default function CreateTrainingLog({ user }: { user: SessionUser }) {
       setError('Failed to save');
     } finally {
       setSaving(false);
+      submittingRef.current = false;
     }
   }
 

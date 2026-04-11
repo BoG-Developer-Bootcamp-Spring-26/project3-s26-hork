@@ -26,6 +26,7 @@ const animalSchema = new mongoose.Schema({
   hoursTrained: {
     type: Number,
     default: 0,
+    min: 0,
   },
   birthdate: {
     type: Date,
